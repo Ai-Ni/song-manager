@@ -1,0 +1,48 @@
+﻿<Window x:Class="Song_Manager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Song_Manager"
+        mc:Ignorable="d"
+        Title="Song Manager" Height="455.341" Width="832.247" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="290*"/>
+        </Grid.ColumnDefinitions>
+        <GroupBox Header="Song's tags" Height="261" Margin="278,7,11,0" VerticalAlignment="Top" Grid.Column="1">
+            <Grid Height="232" Margin="10,10,-2,-1" VerticalAlignment="Top" HorizontalAlignment="Left" Width="506">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Image x:Name="img_tag_image" HorizontalAlignment="Left" Height="212" Margin="0,10,0,0" VerticalAlignment="Top" Width="211" MouseUp="img_tag_image_MouseUp"/>
+                <TextBox x:Name="tb_performer" HorizontalAlignment="Left" Height="23" Margin="228,25,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="258"/>
+                <TextBox x:Name="tb_song" HorizontalAlignment="Left" Height="23" Margin="228,53,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="258"/>
+                <Button x:Name="btn_save_tags" Content="Save" HorizontalAlignment="Left" Margin="325,115,0,0" VerticalAlignment="Top" Width="75" Click="btn_save_tags_Click" Height="25"/>
+                <Button x:Name="btn_execute" Content="Engage" HorizontalAlignment="Left" Margin="228,115,0,0" VerticalAlignment="Top" Width="75" Height="25" RenderTransformOrigin="-1.263,-3.836" Click="btn_execute_Click"/>
+                <Button x:Name="btn_Settings" Content="Settings" HorizontalAlignment="Left" Margin="413,115,0,0" VerticalAlignment="Top" Width="73" Height="25" RenderTransformOrigin="1.128,0.607" Click="btn_Settings_Click"/>
+                <ProgressBar x:Name="prgrsbar_procidingProcess" HorizontalAlignment="Right" Height="30" Margin="0,164,20,0" VerticalAlignment="Top" Width="258" RenderTransformOrigin="0.503,0.467">
+                    <ProgressBar.Effect>
+                        <BlurEffect KernelType="Box" Radius="2"/>
+                    </ProgressBar.Effect>
+                </ProgressBar>
+                <TextBlock x:Name="tb_display_progress" Margin="353,174,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="tb" RenderTransformOrigin="40.3,3" HorizontalAlignment="Left" Width="67"/>
+            </Grid>
+        </GroupBox>
+        <ListBox x:Name="lb_dest_dir" HorizontalAlignment="Left" Height="252" Margin="7,16,0,0" VerticalAlignment="Top" Width="274" PreviewKeyUp="lb_dest_dir_PreviewKeyUp" MouseUp="lb_dest_dir_MouseUp" Grid.ColumnSpan="2"/>
+        <ListView x:Name="lb_log" Margin="0,273,11,10" Grid.Column="1" Focusable="False">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Focusable" Value="false"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+
+    </Grid>
+</Window>

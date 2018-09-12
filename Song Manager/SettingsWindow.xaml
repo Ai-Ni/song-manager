@@ -1,0 +1,27 @@
+﻿<Window x:Class="Song_Manager.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Song_Manager"
+        mc:Ignorable="d"
+        Title="Settings" Height="333" Width="481" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Grid>
+        <Button x:Name="btn_Save" Content="Save" HorizontalAlignment="Left" Margin="111,245,0,0" Width="78" Click="btn_Save_Click" RenderTransformOrigin="0.538,0.857" Height="32" VerticalAlignment="Top"/>
+        <Button x:Name="btn_Cancel" Content="Cancel" Margin="280,245,117,0" RenderTransformOrigin="-0.786,-1.198" Click="btn_Cancel_Click" Height="32" VerticalAlignment="Top"/>
+        <CheckBox x:Name="cb_Remove" Content="Remove source file on prociding" HorizontalAlignment="Left" Margin="157,225,0,0" VerticalAlignment="Top"/>
+        <GroupBox Header="Source Audio Directory" HorizontalAlignment="Left" Height="62" Margin="10,10,0,0" VerticalAlignment="Top" Width="451">
+            <TextBox x:Name="tb_Source_Audio_Directory" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="345"/>
+        </GroupBox>
+        <GroupBox Header="Destination Audio Directory" HorizontalAlignment="Left" Height="62" Margin="10,77,0,0" VerticalAlignment="Top" Width="451">
+            <TextBox x:Name="tb_Destinaton_Audio_Directory" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="343"/>
+        </GroupBox>
+        <GroupBox Header="Image Directory" HorizontalAlignment="Left" Height="62" Margin="10,153,0,0" VerticalAlignment="Top" Width="455">
+            <TextBox x:Name="tb_Image_Directory" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="343"/>
+        </GroupBox>
+        <Button x:Name="btn_source_audio_directory" Content="Change" HorizontalAlignment="Left" Margin="383,35,0,0" VerticalAlignment="Top" Width="67" Click="btn_source_audio_directory_Click"/>
+        <Button x:Name="btn_destination_audio_directory" Content="Change" HorizontalAlignment="Left" Margin="383,102,0,0" VerticalAlignment="Top" Width="67" Click="btn_destination_audio_directory_Click"/>
+        <Button x:Name="btn_image_directory" Content="Change" HorizontalAlignment="Left" Margin="383,179,0,0" VerticalAlignment="Top" Width="67" Click="btn_image_directory_Click"/>
+
+    </Grid>
+</Window>
