@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Song_Manager"
         mc:Ignorable="d"
-        Title="Settings" Height="333" Width="481" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="Settings" Height="356" Width="481" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Grid>
-        <Button x:Name="btn_Save" Content="Save" HorizontalAlignment="Left" Margin="111,245,0,0" Width="78" Click="btn_Save_Click" RenderTransformOrigin="0.538,0.857" Height="32" VerticalAlignment="Top"/>
-        <Button x:Name="btn_Cancel" Content="Cancel" Margin="280,245,117,0" RenderTransformOrigin="-0.786,-1.198" Click="btn_Cancel_Click" Height="32" VerticalAlignment="Top"/>
-        <CheckBox x:Name="cb_Remove" Content="Remove source file on prociding" HorizontalAlignment="Left" Margin="157,225,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="btn_Save" Content="Save" HorizontalAlignment="Left" Margin="146,287,0,0" Width="67" Click="btn_Save_Click" RenderTransformOrigin="0.538,0.857" Height="22" VerticalAlignment="Top"/>
+        <Button x:Name="btn_Cancel" Content="Cancel" Margin="270,286,138,0" RenderTransformOrigin="-0.786,-1.198" Click="btn_Cancel_Click" Height="23" VerticalAlignment="Top"/>
+        <CheckBox x:Name="cb_Remove" Content="Remove source file on prociding" HorizontalAlignment="Left" Margin="26,227,0,0" VerticalAlignment="Top"/>
         <GroupBox Header="Source Audio Directory" HorizontalAlignment="Left" Height="62" Margin="10,10,0,0" VerticalAlignment="Top" Width="451">
             <TextBox x:Name="tb_Source_Audio_Directory" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="345"/>
         </GroupBox>
@@ -22,6 +22,17 @@
         <Button x:Name="btn_source_audio_directory" Content="Change" HorizontalAlignment="Left" Margin="383,35,0,0" VerticalAlignment="Top" Width="67" Click="btn_source_audio_directory_Click"/>
         <Button x:Name="btn_destination_audio_directory" Content="Change" HorizontalAlignment="Left" Margin="383,102,0,0" VerticalAlignment="Top" Width="67" Click="btn_destination_audio_directory_Click"/>
         <Button x:Name="btn_image_directory" Content="Change" HorizontalAlignment="Left" Margin="383,179,0,0" VerticalAlignment="Top" Width="67" Click="btn_image_directory_Click"/>
+        <CheckBox x:Name="cb_Source" Content="Work only with source files" HorizontalAlignment="Left" Margin="26,258,0,0" VerticalAlignment="Top"/>
+        <GroupBox Header="File's name style" HorizontalAlignment="Left" Height="66" Margin="259,215,0,0" VerticalAlignment="Top" Width="161">
+            <Grid HorizontalAlignment="Left" Margin="0,0,-12,0" Width="161" Height="52" VerticalAlignment="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="15*"/>
+                    <ColumnDefinition Width="146*"/>
+                </Grid.ColumnDefinitions>
+                <RadioButton x:Name="rb_style_hyphen" Content="Hyphen" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" IsChecked="True"/>
+                <RadioButton x:Name="rb_style_brackets" Content="Brackets" HorizontalAlignment="Left" Margin="10,29,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+            </Grid>
+        </GroupBox>
 
     </Grid>
 </Window>

@@ -36,7 +36,7 @@ namespace Song_Manager
 
             try
             {
-                UpdateDestinationDirView();
+                UpdateDestinationDirView(settings.IsWorkWithSourceFileOnly);
             }
             catch (Exception ex)
             {
@@ -44,7 +44,7 @@ namespace Song_Manager
             }
         }
 
-        private async Task<int> RenameFilesAsync(string[] fileList, IProgress<int> progress, IProgress<int> prgrss)
+        private async Task<int> ProceedFileAsync(string[] fileList, IProgress<int> progress, IProgress<int> prgrss)
         {
             int successCount = 0, failedCount = 0;
             int totalCount = fileList.Length;
@@ -69,7 +69,7 @@ namespace Song_Manager
 
                     try
                     {
-                        renameFile(file);
+                        ProceedFile(file);
                     }
                     catch (ArgumentNullException ex)
                     {
@@ -80,11 +80,10 @@ namespace Song_Manager
                         failedCount++;
                         progress.Report(((successCount + failedCount) * 100 / totalCount));
                         prgrss.Report(((successCount + failedCount) * 100 / totalCount));
-                       // MessageBox.Show(ex.Message);
                         continue;
                     }
 
-                    catch (IOException ex)
+                    catch (Exception ex)
                     {
                         this.Dispatcher.Invoke(() =>
                         {
@@ -93,7 +92,6 @@ namespace Song_Manager
                         failedCount++;
                         progress.Report(((successCount + failedCount) * 100 / totalCount));
                         prgrss.Report(((successCount + failedCount) * 100 / totalCount));
-                        MessageBox.Show(ex.Message);
                         continue;
                     }
 
@@ -124,49 +122,98 @@ namespace Song_Manager
             return processCount;
         }
 
-        public void renameFile(string file)
+        private void ProceedFile(string file)
         {
-            string songName, fullName;
-            songName = DetermineSongName(file);
+            string songName = null, performer = null, fullName;
+            
+            DetermineSongName(file, settings.STYLE, ref performer, ref songName);
 
-            fullName = "Feng Timo - " + songName + ".mp3";
-            System.IO.File.Copy(file, settings.destinationAudioDirectory + @"\" + fullName, true);
+            if (!settings.IsWorkWithSourceFileOnly)
+            {
+                fullName = performer + " - " + songName + ".mp3";
+                System.IO.File.Copy(file, settings.destinationAudioDirectory + @"\" + fullName, true);
 
-            if (settings.IsRemoveSourceFile)
-                System.IO.File.Delete(file);
+                if (settings.IsRemoveSourceFile)
+                    System.IO.File.Delete(file);
 
-            EditTags(settings.destinationAudioDirectory + @"\" + fullName, "Feng Timo", songName, null);
+                try
+                {
+                    EditTags(settings.destinationAudioDirectory + @"\" + fullName, performer, songName, GetPICTURE_ACTIONS(), null);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                return;
+            }
+
+            try
+            {
+                EditTags(file, performer, songName, GetPICTURE_ACTIONS(), null);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public string DetermineSongName(string fileName)
+        private void DetermineSongName(string fileName, Settings.SONG_NAME_STYLE STYLE, ref string performer, ref string song)
         {
-            int start = fileName.IndexOf("《");
-            int end = fileName.IndexOf("》");
+            switch(STYLE)
+            {
+                case Settings.SONG_NAME_STYLE.HYPHEN:
+                    if (!fileName.Contains("-"))
+                        throw new Exception("There is no hyphen in file name");
 
-            return end <= 0 || !fileName.Contains(".mp3") ? throw new ArgumentNullException() : fileName.Substring(start + 1, end - start - 1);
+                    string[] temp = fileName.Remove(0, fileName.LastIndexOf(@"\") + 1).Split('-');
+                    performer = temp[0].Remove(temp[0].Length - 1, 1);
+                    song = temp[1].Remove(0, 1);
+                    break;
+
+                case Settings.SONG_NAME_STYLE.BRACKETS:
+
+                    int start = fileName.IndexOf("《");
+                int end = fileName.IndexOf("》");
+
+                if (end <= 0)
+                    throw new Exception("There are no brackets in file name");
+
+                song = fileName.Substring(start + 1, end - start - 1);
+                performer = "Feng Timo";
+                    break;
+               
+            }
+            
         }
 
-        public void EditTags(string path, string performer, string songName, string imagePath)
+        public void EditTags(string path, string performer, string songName, PICTURE_ACTIONS STATUS, string imagePath=null)
         {
             TagLib.File file = TagLib.File.Create(path);
             file.Tag.Performers = new string[1] { performer };
             file.Tag.Title = songName;
-            file.Tag.Pictures = new Picture[] { new Picture(imagePath == null ? GetRandomImage() : imagePath) };
 
+            switch (STATUS)
+            {
+                case PICTURE_ACTIONS.NONE:break;
+                case PICTURE_ACTIONS.RANDOM: file.Tag.Pictures = new Picture[] { new Picture(GetRandomImage()) }; break;
+                case PICTURE_ACTIONS.UPLOAD: file.Tag.Pictures = new Picture[] { new Picture(imagePath) }; break;
+            }
+           
             file.Save();
         }
 
         public string GetRandomImage()
         {
-            string[] fileList = GetFilesListByType(settings.imgDirectory, FILETYPE.IMAGE);
+            string[] fileList = GetFileListByType(settings.imgDirectory, FILETYPE.IMAGE);
             Random r = new Random();
 
             return fileList[r.Next(0, fileList.Length)];
         }
 
-        public string[] GetFilesListByType(string directory, FILETYPE ft)
+        public string[] GetFileListByType(string directory, FILETYPE ft)
         {
             string[] fileList = null;
+
             try
             {
                 fileList = Directory.GetFiles(directory);
@@ -179,6 +226,7 @@ namespace Song_Manager
             {
                 throw new Exception("One or few directories names are incorrect!");
             }
+
             List<string> tempList = new List<string>(fileList);
             List<string> bufferList = new List<string>();
 
@@ -209,26 +257,53 @@ namespace Song_Manager
             return bufferList.ToArray();
         }
 
-        public void UpdateDestinationDirView()
+        public void UpdateDestinationDirView(bool IsWorkWithSourceFileOnly = false)
         {
             lb_dest_dir.Items.Clear();
-            string[] fileList = GetFilesListByType(settings.destinationAudioDirectory, FILETYPE.SOUND);
-            if (fileList.Length > 0)
+            string[] fileList;
+
+            try
             {
-                foreach (string file in fileList)
-                    lb_dest_dir.Items.Add(file.Remove(0, file.LastIndexOf(@"\") + 1));
-                lb_dest_dir.SelectedIndex = 0;
-                DisplayTags();
+                if (IsWorkWithSourceFileOnly)
+                {
+                    fileList = GetFileListByType(settings.sourceAudioDirectory, FILETYPE.SOUND);
+                }
+
+                else
+                {
+                    fileList = GetFileListByType(settings.destinationAudioDirectory, FILETYPE.SOUND);
+                }
+
+                if (fileList.Length > 0)
+                {
+                    foreach (string file in fileList)
+                        lb_dest_dir.Items.Add(file.Remove(0, file.LastIndexOf(@"\") + 1));
+                    lb_dest_dir.SelectedIndex = 0;
+                    DisplayTags(IsWorkWithSourceFileOnly);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("It's impossible to update song list. Reason: " + ex.Message);
             }
         }
 
-        private void DisplayTags()
+        private void DisplayTags(bool IsWorkWithSourceFileOnly = false)
         {
             TagLib.File file;
             try
             {
-                file = TagLib.File.Create(settings.destinationAudioDirectory +
-                   @"\" + lb_dest_dir.SelectedItem.ToString());
+                if (IsWorkWithSourceFileOnly)
+                {
+                    file = TagLib.File.Create(settings.sourceAudioDirectory +
+                       @"\" + lb_dest_dir.SelectedItem.ToString());
+                }
+
+                else
+                {
+                    file = TagLib.File.Create(settings.destinationAudioDirectory +
+                       @"\" + lb_dest_dir.SelectedItem.ToString());
+                }
 
                 tb_performer.Text = file.Tag.Performers[0];
                 tb_song.Text = file.Tag.Title;
@@ -262,7 +337,7 @@ namespace Song_Manager
         {
             try
             {
-                int done = await RenameFilesAsync(GetFilesListByType(settings.sourceAudioDirectory, FILETYPE.SOUND),
+                int done = await ProceedFileAsync(GetFileListByType(settings.sourceAudioDirectory, FILETYPE.SOUND),
                     new Progress<int>(percent => prgrsbar_procidingProcess.Value = percent),
                     new Progress<int>(percent => tb_display_progress.Text = percent + "%"));
 
@@ -271,7 +346,7 @@ namespace Song_Manager
             {
                 MessageBox.Show("Prociding process had failed! Reason: " + ex.Message);
             }
-            UpdateDestinationDirView();
+            UpdateDestinationDirView(settings.IsWorkWithSourceFileOnly);
         }
 
         private async Task<Int32> TagAll(IProgress<int> progress, IProgress<int> prgrss)
@@ -323,14 +398,18 @@ namespace Song_Manager
         {
             if (e.Key.ToString().Equals("Up") || e.Key.ToString().Equals("Down"))
             {
-                DisplayTags();
+                DisplayTags(settings.IsWorkWithSourceFileOnly);
             }
         }
 
         private void btn_save_tags_Click(object sender, RoutedEventArgs e)
         {
-            EditTags(settings.destinationAudioDirectory + @"\" + lb_dest_dir.SelectedItem.ToString(),
-              tb_performer.Text, tb_song.Text, tag_img_path);
+            if (settings.IsWorkWithSourceFileOnly)
+                EditTags(settings.sourceAudioDirectory + @"\" + lb_dest_dir.SelectedItem.ToString(),
+              tb_performer.Text, tb_song.Text, GetPICTURE_ACTIONS(), tag_img_path);
+            else
+                EditTags(settings.destinationAudioDirectory + @"\" + lb_dest_dir.SelectedItem.ToString(),
+              tb_performer.Text, tb_song.Text, GetPICTURE_ACTIONS(), tag_img_path);
         }
 
         private void img_tag_image_MouseUp(object sender, MouseButtonEventArgs e)
@@ -349,7 +428,30 @@ namespace Song_Manager
 
         private void lb_dest_dir_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            DisplayTags();
+            DisplayTags(settings.IsWorkWithSourceFileOnly);
+        }
+
+        private PICTURE_ACTIONS GetPICTURE_ACTIONS()
+        {
+            PICTURE_ACTIONS STATUS = PICTURE_ACTIONS.NONE;
+
+            this.Dispatcher.Invoke(() =>
+            {
+                if (rb_pic_rng.IsChecked.Value)
+                    STATUS = PICTURE_ACTIONS.RANDOM;
+
+                if (rb_pic_upload.IsChecked.Value)
+                    STATUS = PICTURE_ACTIONS.UPLOAD;
+            });
+
+            return STATUS;
+        }
+
+        public enum PICTURE_ACTIONS
+        {
+            NONE,
+            RANDOM,
+            UPLOAD
         }
     }
 }

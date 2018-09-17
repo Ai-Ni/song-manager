@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+
 namespace Song_Manager
 {
     /// <summary>
@@ -21,7 +22,8 @@ namespace Song_Manager
     public partial class SettingsWindow : Window
     {
         string source_Audio_Directory, destination_Audio_Directory, img_Directory;
-        bool IsRemoveSourceFile;
+        bool IsRemoveSourceFile, IsWorkWithSourceFileOnly;
+        Settings.SONG_NAME_STYLE STYLE;
         MainWindow mv;
 
         public SettingsWindow()
@@ -36,7 +38,7 @@ namespace Song_Manager
         {
             mv = (MainWindow)Application.Current.MainWindow;
             mv.settings.getSettings(ref source_Audio_Directory, ref destination_Audio_Directory, ref img_Directory,
-                ref IsRemoveSourceFile);
+                ref IsRemoveSourceFile, ref IsWorkWithSourceFileOnly, ref STYLE);
         }
 
         private void InitializeElements()
@@ -49,6 +51,13 @@ namespace Song_Manager
             tb_Destinaton_Audio_Directory.Text = destination_Audio_Directory;
             tb_Image_Directory.Text = img_Directory;
             cb_Remove.IsChecked = IsRemoveSourceFile;
+            cb_Source.IsChecked = IsWorkWithSourceFileOnly;
+
+            switch (STYLE)
+            {
+                case Settings.SONG_NAME_STYLE.HYPHEN: rb_style_hyphen.IsChecked = true; break;
+                case Settings.SONG_NAME_STYLE.BRACKETS: rb_style_brackets.IsChecked = true; break;
+            }
         }
 
         private string BrowseFolder()
@@ -83,8 +92,10 @@ namespace Song_Manager
         private void btn_Save_Click(object sender, RoutedEventArgs e)
         {
             mv.settings.IsRemoveSourceFile = cb_Remove.IsChecked.Value;
+            mv.settings.IsWorkWithSourceFileOnly = cb_Source.IsChecked.Value;
+            mv.settings.STYLE = rb_style_hyphen.IsChecked.Value ? Settings.SONG_NAME_STYLE.HYPHEN : Settings.SONG_NAME_STYLE.BRACKETS;
             mv.settings.setSettings();
-            mv.UpdateDestinationDirView();
+            mv.UpdateDestinationDirView(mv.settings.IsWorkWithSourceFileOnly);
             Close();
         }
 

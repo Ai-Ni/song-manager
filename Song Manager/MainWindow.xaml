@@ -17,17 +17,25 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Image x:Name="img_tag_image" HorizontalAlignment="Left" Height="212" Margin="0,10,0,0" VerticalAlignment="Top" Width="211" MouseUp="img_tag_image_MouseUp"/>
-                <TextBox x:Name="tb_performer" HorizontalAlignment="Left" Height="23" Margin="228,25,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="258"/>
-                <TextBox x:Name="tb_song" HorizontalAlignment="Left" Height="23" Margin="228,53,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="258"/>
-                <Button x:Name="btn_save_tags" Content="Save" HorizontalAlignment="Left" Margin="325,115,0,0" VerticalAlignment="Top" Width="75" Click="btn_save_tags_Click" Height="25"/>
-                <Button x:Name="btn_execute" Content="Engage" HorizontalAlignment="Left" Margin="228,115,0,0" VerticalAlignment="Top" Width="75" Height="25" RenderTransformOrigin="-1.263,-3.836" Click="btn_execute_Click"/>
-                <Button x:Name="btn_Settings" Content="Settings" HorizontalAlignment="Left" Margin="413,115,0,0" VerticalAlignment="Top" Width="73" Height="25" RenderTransformOrigin="1.128,0.607" Click="btn_Settings_Click"/>
-                <ProgressBar x:Name="prgrsbar_procidingProcess" HorizontalAlignment="Right" Height="30" Margin="0,164,20,0" VerticalAlignment="Top" Width="258" RenderTransformOrigin="0.503,0.467">
+                <TextBox x:Name="tb_performer" HorizontalAlignment="Left" Height="23" Margin="228,9,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="258"/>
+                <TextBox x:Name="tb_song" HorizontalAlignment="Left" Height="23" Margin="228,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="258"/>
+                <Button x:Name="btn_save_tags" Content="Save" HorizontalAlignment="Left" Margin="321,68,0,0" VerticalAlignment="Top" Width="75" Click="btn_save_tags_Click" Height="25"/>
+                <Button x:Name="btn_execute" Content="Engage" HorizontalAlignment="Left" Margin="228,68,0,0" VerticalAlignment="Top" Width="75" Height="25" RenderTransformOrigin="-1.263,-3.836" Click="btn_execute_Click"/>
+                <Button x:Name="btn_Settings" Content="Settings" HorizontalAlignment="Left" Margin="413,68,0,0" VerticalAlignment="Top" Width="73" Height="25" RenderTransformOrigin="1.128,0.607" Click="btn_Settings_Click"/>
+                <ProgressBar x:Name="prgrsbar_procidingProcess" HorizontalAlignment="Right" Height="30" Margin="0,107,20,0" VerticalAlignment="Top" Width="258" RenderTransformOrigin="0.503,0.467">
                     <ProgressBar.Effect>
                         <BlurEffect KernelType="Box" Radius="2"/>
                     </ProgressBar.Effect>
                 </ProgressBar>
-                <TextBlock x:Name="tb_display_progress" Margin="353,174,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="tb" RenderTransformOrigin="40.3,3" HorizontalAlignment="Left" Width="67"/>
+                <TextBlock x:Name="tb_display_progress" Margin="353,117,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="tb" RenderTransformOrigin="40.3,3" HorizontalAlignment="Left" Width="67"/>
+                <GroupBox Header="Action with song's picture" HorizontalAlignment="Left" Height="87" Margin="228,145,0,0" VerticalAlignment="Top" Width="258">
+                    <Grid HorizontalAlignment="Left" Height="98" VerticalAlignment="Top" Width="258" Margin="0,0,-12,-20">
+                        <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="595,202,-412,-117" VerticalAlignment="Top"/>
+                        <RadioButton x:Name="rb_pic_upload" Content="Upload picture" HorizontalAlignment="Left" Margin="10,52,0,0" VerticalAlignment="Top"/>
+                        <RadioButton x:Name="rb_pic_rng" Content="Choose picture randomly" HorizontalAlignment="Left" Margin="10,31,0,0" VerticalAlignment="Top"/>
+                        <RadioButton x:Name="rb_pic_none" Content="Don't change song's picture" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                    </Grid>
+                </GroupBox>
             </Grid>
         </GroupBox>
         <ListBox x:Name="lb_dest_dir" HorizontalAlignment="Left" Height="252" Margin="7,16,0,0" VerticalAlignment="Top" Width="274" PreviewKeyUp="lb_dest_dir_PreviewKeyUp" MouseUp="lb_dest_dir_MouseUp" Grid.ColumnSpan="2"/>
