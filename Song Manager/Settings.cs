@@ -10,44 +10,74 @@ using System.Windows;
 
 namespace Song_Manager
 {
+    /// <summary>
+    /// Class with apps settings.
+    /// </summary>
     [DataContract]
     class Settings
     {
+        /// <summary>
+        /// Path to files for prociding.
+        /// </summary>
         [DataMember]
         public string sourceAudioDirectory { get; set; }
 
+        /// <summary>
+        /// Output path.
+        /// </summary>
         [DataMember]
         public string destinationAudioDirectory { get; set; }
 
+        /// <summary>
+        /// Path to folder with images.
+        /// </summary>
         [DataMember]
         public string imgDirectory { get; set; }
 
+        /// <summary>
+        /// Remove source file after prociding
+        /// </summary>
         [DataMember]
         public bool IsRemoveSourceFile { get; set; }
 
+        /// <summary>
+        /// Make changes in source files without creating new files.
+        /// </summary>
         [DataMember]
         public bool IsWorkWithSourceFileOnly { get; set; }
 
+        /// <summary>
+        /// Style of the song naming - brackets, hyphen
+        /// </summary>
         [DataMember]
         public SONG_NAME_STYLE STYLE { get; set; }
 
-        public Settings()
-        {
+        public Settings() { }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="sourceAudioDirectory"></param>
+        /// <param name="destinationAudioDirectory"></param>
+        /// <param name="imgDirectory"></param>
+        /// <param name="IsRemoveSourceFile"></param>
+        /// <param name="IsWorkWithSourceFileOnly"></param>
+        /// <param name="STYLE"></param>
+        public Settings(string sourceAudioDirectory, string destinationAudioDirectory,
+            string imgDirectory, bool IsRemoveSourceFile, bool IsWorkWithSourceFileOnly, SONG_NAME_STYLE STYLE)
+        {
+            this.sourceAudioDirectory = sourceAudioDirectory;
+            this.destinationAudioDirectory = destinationAudioDirectory;
+            this.imgDirectory = imgDirectory;
+            this.IsRemoveSourceFile = IsRemoveSourceFile;
+            this.IsWorkWithSourceFileOnly = IsWorkWithSourceFileOnly;
+            this.STYLE = STYLE;
         }
 
-        public Settings(string _sourceAudioDirectory, string _destinationAudioDirectory,
-            string _imgDirectory, bool _IsRemveSourceFiles, bool _IsWorkWithSourceFileOnly, SONG_NAME_STYLE _STYLE)
-        {
-            sourceAudioDirectory = _sourceAudioDirectory;
-            destinationAudioDirectory = _destinationAudioDirectory;
-            imgDirectory = _imgDirectory;
-            IsRemoveSourceFile = _IsRemveSourceFiles;
-            IsWorkWithSourceFileOnly = _IsWorkWithSourceFileOnly;
-            STYLE = _STYLE;
-        }
-
-        public void loadSettings()
+        /// <summary>
+        /// Loads settings from json file
+        /// </summary>
+        public void LoadSettings()
         {
             DataContractJsonSerializer jsonFormatter = new DataContractJsonSerializer(typeof(Settings));
             try
@@ -70,7 +100,10 @@ namespace Song_Manager
             }
         }
 
-        public void setSettings()
+        /// <summary>
+        /// Save settings to json file.
+        /// </summary>
+        public void SetSettings()
         {
             try
             {
@@ -88,16 +121,25 @@ namespace Song_Manager
             }
         }
 
-        public void getSettings(ref string _Source_Audio_Directory, ref string _Destination_Audio_Directory,
-            ref string _Img_Directory, ref bool _IsRemoveSourceFile, ref bool _IsWorkWithSourceFileOnly,
-            ref SONG_NAME_STYLE _STYLE)
+        /// <summary>
+        /// Returns all settings.
+        /// </summary>
+        /// <param name="_Source_Audio_Directory"></param>
+        /// <param name="_Destination_Audio_Directory"></param>
+        /// <param name="_Img_Directory"></param>
+        /// <param name="_IsRemoveSourceFile"></param>
+        /// <param name="_IsWorkWithSourceFileOnly"></param>
+        /// <param name="_STYLE"></param>
+        public void GetSettings(ref string sourceAudioDirectory, ref string destinationAudioDirectory,
+            ref string imgDirectory, ref bool IsRemoveSourceFile, ref bool IsWorkWithSourceFileOnly,
+            ref SONG_NAME_STYLE STYLE)
         {
-            _Source_Audio_Directory = sourceAudioDirectory;
-            _Destination_Audio_Directory = destinationAudioDirectory;
-            _Img_Directory = imgDirectory;
-            _IsRemoveSourceFile = IsRemoveSourceFile;
-            _IsWorkWithSourceFileOnly = IsWorkWithSourceFileOnly;
-            _STYLE = STYLE;
+            sourceAudioDirectory = this.sourceAudioDirectory;
+            destinationAudioDirectory = this.destinationAudioDirectory;
+            imgDirectory = this.imgDirectory;
+            IsRemoveSourceFile = this.IsRemoveSourceFile;
+            IsWorkWithSourceFileOnly = this.IsWorkWithSourceFileOnly;
+            STYLE = this.STYLE;
         }
 
         public enum SONG_NAME_STYLE

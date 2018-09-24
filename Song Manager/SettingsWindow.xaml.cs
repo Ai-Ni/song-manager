@@ -37,7 +37,7 @@ namespace Song_Manager
         private void InitializeMainWindow(ref MainWindow mw)
         {
             mv = (MainWindow)Application.Current.MainWindow;
-            mv.settings.getSettings(ref source_Audio_Directory, ref destination_Audio_Directory, ref img_Directory,
+            mv.settings.GetSettings(ref source_Audio_Directory, ref destination_Audio_Directory, ref img_Directory,
                 ref IsRemoveSourceFile, ref IsWorkWithSourceFileOnly, ref STYLE);
         }
 
@@ -94,7 +94,7 @@ namespace Song_Manager
             mv.settings.IsRemoveSourceFile = cb_Remove.IsChecked.Value;
             mv.settings.IsWorkWithSourceFileOnly = cb_Source.IsChecked.Value;
             mv.settings.STYLE = rb_style_hyphen.IsChecked.Value ? Settings.SONG_NAME_STYLE.HYPHEN : Settings.SONG_NAME_STYLE.BRACKETS;
-            mv.settings.setSettings();
+            mv.settings.SetSettings();
             mv.UpdateDestinationDirView(mv.settings.IsWorkWithSourceFileOnly);
             Close();
         }

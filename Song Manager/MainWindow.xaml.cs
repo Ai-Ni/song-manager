@@ -31,7 +31,7 @@ namespace Song_Manager
             InitializeComponent();
 
             settings = new Settings();
-            settings.loadSettings();
+            settings.LoadSettings();
             tb_display_progress.Text = null;
 
             try
@@ -44,6 +44,13 @@ namespace Song_Manager
             }
         }
 
+        /// <summary>
+        /// Control function.
+        /// </summary>
+        /// <param name="fileList">List with mp3 files for prociding.</param>
+        /// <param name="progress">Value for progressbar.</param>
+        /// <param name="prgrss">Value for label.</param>
+        /// <returns></returns>
         private async Task<int> ProceedFileAsync(string[] fileList, IProgress<int> progress, IProgress<int> prgrss)
         {
             int successCount = 0, failedCount = 0;
@@ -57,7 +64,7 @@ namespace Song_Manager
                     lb_log.Items.Add("Started prociding of " + fileList.Length.ToString() + " audio files:");
                 });
                 
-                Int32 i = 0;
+                var i = 0;
                 foreach (string file in fileList)
                 {
                     i++;
@@ -122,6 +129,10 @@ namespace Song_Manager
             return processCount;
         }
 
+        /// <summary>
+        /// Fills tags, creates copy (if required)
+        /// </summary>
+        /// <param name="file">Full path to mp3 file.</param>
         private void ProceedFile(string file)
         {
             string songName = null, performer = null, fullName;
@@ -157,6 +168,13 @@ namespace Song_Manager
             }
         }
 
+        /// <summary>
+        /// Returns song; name and performers via ref variables.
+        /// </summary>
+        /// <param name="fileName">Full path to mp3 file.</param>
+        /// <param name="STYLE">Songs name style.</param>
+        /// <param name="performer">Performer.</param>
+        /// <param name="song">Songs name.</param>
         private void DetermineSongName(string fileName, Settings.SONG_NAME_STYLE STYLE, ref string performer, ref string song)
         {
             switch(STYLE)
@@ -172,7 +190,7 @@ namespace Song_Manager
 
                 case Settings.SONG_NAME_STYLE.BRACKETS:
 
-                    int start = fileName.IndexOf("《");
+                int start = fileName.IndexOf("《");
                 int end = fileName.IndexOf("》");
 
                 if (end <= 0)
@@ -183,25 +201,35 @@ namespace Song_Manager
                     break;
                
             }
-            
         }
 
-        public void EditTags(string path, string performer, string songName, PICTURE_ACTIONS STATUS, string imagePath=null)
+        /// <summary>
+        /// Fills songs tags.
+        /// </summary>
+        /// <param name="path">Full path to mp3 file.</param>
+        /// <param name="performer">Performer.</param>
+        /// <param name="songName">Songs name.</param>
+        /// <param name="ACTION">Action with image - none, set random or upload.</param>
+        /// <param name="imagePath">Full path to image file(if set upload action).</param>
+        public void EditTags(string path, string performer, string songName, PICTURE_ACTIONS ACTION, string imagePath=null)
         {
             TagLib.File file = TagLib.File.Create(path);
             file.Tag.Performers = new string[1] { performer };
             file.Tag.Title = songName;
 
-            switch (STATUS)
+            switch (ACTION)
             {
                 case PICTURE_ACTIONS.NONE:break;
                 case PICTURE_ACTIONS.RANDOM: file.Tag.Pictures = new Picture[] { new Picture(GetRandomImage()) }; break;
                 case PICTURE_ACTIONS.UPLOAD: file.Tag.Pictures = new Picture[] { new Picture(imagePath) }; break;
             }
-           
             file.Save();
         }
 
+        /// <summary>
+        /// Returns random image from folder.
+        /// </summary>
+        /// <returns></returns>
         public string GetRandomImage()
         {
             string[] fileList = GetFileListByType(settings.imgDirectory, FILETYPE.IMAGE);
@@ -210,6 +238,12 @@ namespace Song_Manager
             return fileList[r.Next(0, fileList.Length)];
         }
 
+        /// <summary>
+        /// Returns list of certain files in the directory.
+        /// </summary>
+        /// <param name="directory">Full path to folder with files.</param>
+        /// <param name="ft">Type of file to search.</param>
+        /// <returns></returns>
         public string[] GetFileListByType(string directory, FILETYPE ft)
         {
             string[] fileList = null;
@@ -257,6 +291,10 @@ namespace Song_Manager
             return bufferList.ToArray();
         }
 
+        /// <summary>
+        /// Loads output files list to listbox.
+        /// </summary>
+        /// <param name="IsWorkWithSourceFileOnly"></param>
         public void UpdateDestinationDirView(bool IsWorkWithSourceFileOnly = false)
         {
             lb_dest_dir.Items.Clear();
@@ -288,6 +326,10 @@ namespace Song_Manager
             }
         }
 
+        /// <summary>
+        /// Displays tags(peroformer, song, image).
+        /// </summary>
+        /// <param name="IsWorkWithSourceFileOnly"></param>
         private void DisplayTags(bool IsWorkWithSourceFileOnly = false)
         {
             TagLib.File file;
@@ -347,43 +389,6 @@ namespace Song_Manager
                 MessageBox.Show("Prociding process had failed! Reason: " + ex.Message);
             }
             UpdateDestinationDirView(settings.IsWorkWithSourceFileOnly);
-        }
-
-        private async Task<Int32> TagAll(IProgress<int> progress, IProgress<int> prgrss)
-        {
-            string[] fileList = Directory.GetFiles(settings.sourceAudioDirectory); 
-            string _performer, _song, full;
-            Int32 count = fileList.Length;
-            int processCount = await Task.Run<int>(() =>
-            {
-                Int32 i = 0;
-                foreach (string file in fileList)
-                {
-                    i++;
-                    _song = file.Split('-')[1].Remove(0, 1).Split('.')[0];
-                    _performer = file.Split('-')[0];
-                    _performer = _performer.Remove(_performer.Length - 1).Remove(0, _performer.LastIndexOf('\\') + 1);
-                    full = _performer + " - " + _song + ".mp3";
-                    System.IO.File.Copy(file, settings.destinationAudioDirectory + @"\" + full, true);
-
-                    TagLib.File _file = TagLib.File.Create(settings.destinationAudioDirectory + @"\" + full);
-                    _file.Tag.Performers = new string[1] { _performer };
-                    _file.Tag.Title = _song;
-
-
-                    _file.Save();
-
-
-                    if (progress != null)
-                    {
-                        progress.Report(i * 100 / count);
-                        prgrss.Report(i * 100 / count);
-                    }
-                    
-                }
-                return 0;
-            });
-            return 0;
         }
 
         private void btn_Settings_Click(object sender, RoutedEventArgs e)
